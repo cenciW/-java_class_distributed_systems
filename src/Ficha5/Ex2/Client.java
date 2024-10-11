@@ -1,5 +1,6 @@
 package src.Ficha5.Ex2;
 
+import src.Ficha5.Ex1.Server;
 import src.utils.InputValidation;
 
 import java.io.BufferedReader;
@@ -18,7 +19,7 @@ public class Client {
         String hostName = sc.nextLine();
 
         int portNumber = InputValidation.validateIntBetween(sc,
-                "Introduza a porta em que o server está escutando: ",
+                "Introduza a porta em que o server está escutando(entre 1024 e 65535): ",
                 1024, 65535);
 
         try(
@@ -52,7 +53,8 @@ public class Client {
             out.println(valueInt);
 
             //receive from server
-            int currentChips = in.read();
+            int currentChips = Integer.parseInt(in.readLine());
+
 
             //console print
             System.out.println("Número de fichas investidas: " + currentChips);
@@ -60,22 +62,53 @@ public class Client {
             //client receive from server and print the message
             System.out.println(in.readLine());
 
-            int number, chipsToBet;
+            int number, chipsToBet, extractedNumber;
+            String text;
             while(true){
                 number = InputValidation.validateIntBetween(sc,"Introduza o número que quer apostar. Tem de ser um número entre (1 e 36)\n :> ", 1, 36);
+                out.println(number);
                 chipsToBet = InputValidation.validateIntBetween(sc, "Introduza quantas fichas deseja apostar no número: "+ number+ ". Tem de ser um número entre (0 e " + currentChips + ") ", 1, currentChips);
-
                 out.println(chipsToBet);
 
-                
+                extractedNumber = Integer.parseInt(in.readLine());
+//                System.out.println(extractedNumber);
+                currentChips = Integer.parseInt(in.readLine());
+//                System.out.println(currentChips);
 
+                if(number == extractedNumber){
+                    System.out.println("Parabéns, acertou no número: " + extractedNumber +"\n"
+                    + "Ficou com: " + currentChips + " fichas\n");
+                } else if(currentChips == 0){
+                    System.out.println("O número extraído foi: " + extractedNumber);
+                    System.out.println("Não tem mais fichas para apostar. Obrigado.");
+                    out.println("Sair");
+                    break;
+
+                } else {
+                   System.out.println("O número extraído foi: " + extractedNumber);
+                   System.out.println("Ficou com: " + currentChips + " fichas\n");
+                }
+
+                //loop input S or N.
+                do{
+                    System.out.print("Deseja fazer mais uma aposta? (S/N)\n :>");
+                    text = sc.nextLine();
+
+                }while(!text.equalsIgnoreCase("s") && !text.equalsIgnoreCase("n"));
+
+                //
+                if(text.equalsIgnoreCase("n")) {
+                    out.println("Obrigado por jogar na nossa plataforma. Até breve.");
+                    out.println("Sair");
+                    break;
+                } else{
+                    out.println("Continuar.");
+                }
             }
 
         }catch (IOException e) {
             System.out.println("Erro de I/O: " + e.getMessage());
             System.exit(4);
-        }catch (Exception e) {
-            System.out.println("Erro: " + e.getMessage());
         }
         sc.close();
     }
