@@ -27,7 +27,7 @@ public class Client {
             Numbers numbers = (Numbers)objIn.readObject();
             System.out.println(numbers);
 
-            int mult = InputValidation.validateInt(sc, "Digite o valor pelo qual deseja multiplicar os elemtnos do " +
+            int mult = InputValidation.validateInt(sc, "Digite o valor pelo qual deseja multiplicar os elementos do " +
                     "array: ");
 
             //multiplicando o array de numbers pelo mult
