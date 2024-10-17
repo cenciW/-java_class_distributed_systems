@@ -61,6 +61,7 @@ public class ServerThread extends Thread {
                 //number of chips to bet
                 number = Integer.parseInt(in.readLine());
                 System.out.println("Thread Name: " + this.getName() + ": O Cliente quer apostar no número: " + number);
+
                 chipsToBet = Integer.parseInt(in.readLine());
                 System.out.println("Thread Name: " + this.getName() + ": O Cliente quer apostar " + chipsToBet + " chips, no número: "
                         + number);
@@ -78,6 +79,12 @@ public class ServerThread extends Thread {
                 //wait all the bets - all clients
                 //arrive and await to go
                 phaser.arriveAndAwaitAdvance();
+
+//                try{
+//                    semaphore.aqcuire();
+//                } catch (InterruptedException ) {
+//
+//                }
 
 
                 System.out.println("Thread " + this.getName() + ": O número extraído foi " + Server.EXTRACTED_NUMBER + " chips");
@@ -108,6 +115,16 @@ public class ServerThread extends Thread {
                 if(Server.is_game_ended){
                     System.out.println("Thread " + this.getName() +
                             ": O jogo terminou.");
+
+                    //from server thread to client
+                    out.println("Sair");
+
+                    break;
+                }else{
+                    out.println("Continuar");
+                }
+
+                if(in.readLine().equals("Sair")){
                     break;
                 }
             }

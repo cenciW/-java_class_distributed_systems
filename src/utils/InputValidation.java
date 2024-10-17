@@ -18,11 +18,11 @@ public class InputValidation {
                     return value;
 
                 } else {
-                    System.out.println("Por favor, introduza um n�mero inteiro maior ou igual a zero.");
+                    System.out.println("Por favor, introduza um numero inteiro maior ou igual a zero.");
                 }
 
             } catch (InputMismatchException e) {
-                System.out.println("Por favor, introduza um n�mero inteiro maior ou igual a zero.");
+                System.out.println("Por favor, introduza um numero inteiro maior ou igual a zero.");
                 sc.nextLine();
             }
         }
@@ -42,11 +42,11 @@ public class InputValidation {
                     return value;
 
                 } else {
-                    System.out.println("Por favor, introduza um n�mero inteiro entre " + min + " e " + max);
+                    System.out.println("Por favor, introduza um numero inteiro entre " + min + " e " + max);
                 }
 
             } catch (InputMismatchException e) {
-                System.out.println("Por favor, introduza um n�mero inteiro entre " + min + " e " + max);
+                System.out.println("Por favor, introduza um numero inteiro entre " + min + " e " + max);
                 sc.nextLine();
             }
         }
@@ -61,14 +61,14 @@ public class InputValidation {
                 sc.nextLine();
 
                 if (value <= 0) {
-                    System.out.println("Por favor, introduza um n�mero inteiro maior do que 0.");
+                    System.out.println("Por favor, introduza um numero inteiro maior do que 0.");
 
                 } else {
                     return value;
                 }
 
             } catch (InputMismatchException e) {
-                System.out.println("Por favor, introduza um n�mero inteiro maior do que 0.");
+                System.out.println("Por favor, introduza um numero inteiro maior do que 0.");
                 sc.nextLine();
             }
         }
@@ -83,14 +83,14 @@ public class InputValidation {
                 sc.nextLine();
 
                 if (value <= n) {
-                    System.out.println("Por favor, introduza um n�mero inteiro maior do que " + n + ".");
+                    System.out.println("Por favor, introduza um numero inteiro maior do que " + n + ".");
 
                 } else {
                     return value;
                 }
 
             } catch (InputMismatchException e) {
-                System.out.println("Por favor, introduza um n�mero inteiro maior do que 0 " + n + ".");
+                System.out.println("Por favor, introduza um numero inteiro maior do que 0 " + n + ".");
                 sc.nextLine();
             }
         }
@@ -107,7 +107,7 @@ public class InputValidation {
                 return value;
 
             } catch (InputMismatchException e) {
-                System.out.println("Por favor introduza um n�mero inteiro maior do que 0.");
+                System.out.println("Por favor introduza um numero inteiro maior do que 0.");
                 sc.nextLine();
             }
         }

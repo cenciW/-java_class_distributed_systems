@@ -104,12 +104,20 @@ public class Client {
                 } else{
                     out.println("Continuar.");
                 }
+
+                if(in.readLine().equals("Sair")){
+                    System.out.println("o jogo terminou.");
+                    System.out.println("Obrigado por jogar. Até breve.");
+//                    out.println("Sair");
+                    break;
+                }
             }
 
         }catch (IOException e) {
             System.out.println("Erro de I/O: " + e.getMessage());
             System.exit(4);
+        } finally {
+            sc.close();
         }
-        sc.close();
     }
 }

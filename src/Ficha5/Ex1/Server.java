@@ -50,10 +50,11 @@ public class Server {
             while (true){
                 System.out.println("Main: À espera de novas ligações.");
                 try{
+                    //server locked waiting connects
                     Socket clientSocket = serverSocket.accept();
                     //accepting new connects
                     System.out.println("Main: Nova ligação.");
-                    //execute the client threads
+                    //execute the client threads - we don't know how many threads are be instanced
                     executor.execute(
                             new ServerThread(clientSocket, phaser)
                     );
@@ -62,6 +63,7 @@ public class Server {
                 }catch (SocketTimeoutException ste){
 //                    throw new SocketTimeoutException(ste.getMessage());
                     System.out.println("Main: Acabou o tempo para aceitar novos jogares: ");
+                    //semaphore.realse
                     executor.shutdownNow();
                     break;
                 }
@@ -70,6 +72,7 @@ public class Server {
 
             if (!executor.awaitTermination(MAX_GAME_TIME, TimeUnit.SECONDS)){
                 is_game_ended = true;
+                System.out.println("Main: O tempo de jogo terminou.");
             }
 
         } catch (InterruptedException e) {
