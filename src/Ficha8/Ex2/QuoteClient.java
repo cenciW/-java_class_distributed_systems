@@ -9,14 +9,14 @@ public class QuoteClient {
             DatagramSocket socket = new DatagramSocket();
             byte[] buffer = new byte[256];
             InetAddress addres = InetAddress.getByName("localhost");
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, addres, 4322);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, addres, 4332);
             //enviou o pacote
             socket.send(packet);
 
             //agora precisa ficar esperando para receber
             socket.receive(packet);
             //mostrar o que recebi
-            String phraseReceived = new String(packet.getData());
+            String phraseReceived = new String(packet.getData(), 0, packet.getLength());
             System.out.println(phraseReceived);
 
         } catch (SocketException e) {
