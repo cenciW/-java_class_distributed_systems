@@ -118,6 +118,7 @@ import src.Ficha7.utils.CalcModel;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class CalcClient {
@@ -169,7 +170,7 @@ public class CalcClient {
         // Comunicação com o servidor
         try (
                 Scanner sc = new Scanner(System.in);
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
 //                ObjectOutputStream objOut = new ObjectOutputStream(clientSocket.getOutputStream());
                 ObjectInputStream objIn = new ObjectInputStream(clientSocket.getInputStream())
         ) {

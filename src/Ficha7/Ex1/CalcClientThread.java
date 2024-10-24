@@ -4,6 +4,7 @@ import src.Ficha7.utils.CalcModel;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 
@@ -32,7 +33,7 @@ public class CalcClientThread extends Thread{
 //                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 Scanner sc = new Scanner(System.in);
                 ObjectOutputStream objOut = new ObjectOutputStream(clientSocket.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
                 )
         {
             String input = "";
