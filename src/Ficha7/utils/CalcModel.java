@@ -11,10 +11,22 @@ public class CalcModel implements Serializable {
     private double resultado, operando1, operando2;
 
     public CalcModel(double operando1, double operando2, String operador) {
-        this.operando1 = operando1;
-        this.operando2 = operando2;
-        this.operador = operador;
+            this.operando1 = operando1;
+            this.operando2 = operando2;
+            this.operador = operador;
+//        if(validateInputs(operando1, operando2, operador)){
+//        }else{
+//            throw new IllegalArgumentException("Valor invalido");
+//        }
     }
+
+//    public boolean validateInputs(double operando1, double operando2, String operador){
+//
+//        if(operador.contains("/") || operador.contains(":")){
+//            return operando2 != 0;
+//        }
+//        return true;
+//    }
 
     public CalcModel(){}
 

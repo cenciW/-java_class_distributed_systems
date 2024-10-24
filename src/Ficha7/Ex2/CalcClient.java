@@ -188,9 +188,9 @@ public class CalcClient {
                 //tentar receber o objeto de resposta
                 try{
                     cm = (CalcModel) objIn.readObject();
-                    System.out.println("Para a operação: {" + cm.toString() + "}");
+                    System.out.print("Para a operação: {" + cm.toString() + "} = ");
 
-                    System.out.println("O resultado é: " + cm.getResultado() + "\n\n");
+                    System.out.print(cm.getResultado() + "\n\n");
 
                 }catch (ClassNotFoundException e) {
                     System.err.println("Erro na recepção do objeto: " + e.getMessage());
