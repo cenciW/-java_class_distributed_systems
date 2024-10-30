@@ -31,22 +31,26 @@ public class Client {
         ) {
             User userLogged;
             do{
-
+                //login e senha
                 System.out.print("Login:> ");
                 String login = sc.nextLine();
                 System.out.print("Senha:> ");
                 String password = sc.nextLine();
 
+                //enviando login e senha para o server
                 out.println(login);
                 out.println(password);
 
+                //recebendo a resposta da auth do servidor
                 String statusAuth = in.readLine();
 
+                //se o que vier de resposta do servidor for: "FINALIZADO" significa que o jogo acabou.
                 if(statusAuth.equalsIgnoreCase("FINALIZADO")){
                     System.out.println("O jogo já foi finalizado, não pode mais se conectar.");
-                    return;  // Sai do programa
+                    return;
                 }
 
+                //se o que vier de resposta do servidor for: "AUTENTICADO" significa que o jogador pode jogar.
                 if(statusAuth.equalsIgnoreCase("AUTENTICADO")){
                     //autenticado
                     userLogged = new User(login, password);
@@ -58,7 +62,7 @@ public class Client {
                     //mexer com attemps
                     attempts--;
                     if(attempts == 0){
-                        //nao tem mais tentativa
+                        //nao tem mais tentativa de login
                         System.out.println("Tentativas encerradas.");
                         System.exit(0);
                     } else{
@@ -76,30 +80,42 @@ public class Client {
                 //envia pro servidor a palavra ou a letra
                 System.out.println("A palavra é: " + hiddenWord);
 
-                //lendo o pitaco
+                //lendo o palpite
                 String guessFromClient = sc.nextLine();
 
 
-                //mandando pitaco pro server
+                //mandando palpite pro server
                 out.println(guessFromClient);
 
-                //recebe o status do server thread
+                //recebe o feedback do server thread
                 String feedback = in.readLine();
 
+                //se o que vier no feedback começar com GANHOU.
                 if (feedback.startsWith("GANHOU:")) {
+                    //temos um vencedor
                     String palavraFinal = feedback.split(":")[1]; // Extrai a palavra final
                     System.out.println("Parabéns! Você ganhou. A palavra é: " + palavraFinal);
                     return;
                 } else {
+                    //se nao começar com GANHOU.
                     switch(feedback) {
+                        //acerto parcial, ou seja, o server enviou para o cliente: PARCIAL
+                        //significa que o cliente acertou uma letra
                         case "PARCIAL":
                             System.out.println("Acertou o palpite: " + guessFromClient + "\n");
                             break;
+                        //erro, ou seja, o server enviou para o cliente: ERRO
+                        //significa que o cliente inseriu mais de uma palavra, ou mais de uma letra.
+                        //portanto está com erro e nao podemos continuar
                         case "ERRO":
                             System.out.println("Errou o palpite.");
                             break;
+                        //finalizado, ou seja, o server enviou para o cliente: FINALIZADO.
+                        //significa que algum cliente já acertou o palpite e por isso o jogo foi finalizado
+                        //portanto ninguém pode mais se conectar
                         case "FINALIZADO":
                             System.out.println("O jogo já foi finalizado, não pode mais se conectar.\n");
+                        //caso padrão, se nao cair em nenhum dos cases, cai aqui e apenas printa o que o servidor enviou para cá (cliente)
                         default:
                             System.out.println(feedback);
                             return;

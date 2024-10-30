@@ -14,16 +14,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 
-//block all the threads to wait all players come
+//bloquear as threads para esperar os jogadores chegarem
 public class Server {
     //defines
 
-    //max number of threads simult
+    //número máximo de threads
     private final static int N_THREADS = 10;
     private final static int SOCKET_TIMEOUT = 50000;
     private final static Phaser phaser = new Phaser();
-    public static volatile int EXTRACTED_NUMBER;
-    //configuring timeout
+//    public static volatile int EXTRACTED_NUMBER;
+    //configurando timeout
     private final static int MAX_GAME_TIME = 50000;
     public static volatile boolean is_game_ended = false;
     public static String WORD_CHOOSE;
@@ -37,8 +37,12 @@ public class Server {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
 
+            //enquanto tiver linha no arquivo continuar lendo.
             while ((line = br.readLine()) != null) {
+                //separa por ; e coloca num vetor de strings
+                //user1;senha123;attemps
                 String[] parts = line.split(";");
+                //se tivermos 3 strings no vetor de strings, significa que o usuário escreveu certo e podemos tentar atualizar o log
                 if (parts.length == 3) {
                     // Zera as tentativas de login
                     String updatedLine = parts[0] + ";" + parts[1] + ";0\n";
@@ -46,39 +50,41 @@ public class Server {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erro de I/O: " + e.getMessage());
         }
 
         // Gravar o conteúdo atualizado de volta no arquivo
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
             bw.write(updatedContent.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Erro ao gravar no atualizações no arquivo de usuários: " + e.getMessage());
         }
     }
 
 
-    //'psvm' makes the main
+    //'psvm' main
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-//        //server input: portNumber -> server will listen on this port
+//      //Porta que o servidor vai rodar
         int portNumber = InputValidation.validateIntBetween(sc,
                 "Introduza o número da porta que o servidor irá escutar (entre 1024 e 65535): ",
                 1024, 65535);
 
+        //atribuindo a palavra chave para começar o jogo
         System.out.print("Digite a palavra para o jogo: ");
         WORD_CHOOSE = sc.nextLine().strip();
 
 
-        //closing the scanner
+        //fechando scanner
         sc.close();
+
 
         try (
                 ServerSocket serverSocket = new ServerSocket(portNumber);
-                ExecutorService executor = Executors.newFixedThreadPool(N_THREADS);
+                ExecutorService executor = Executors.newFixedThreadPool(N_THREADS)
         ) {
-            //wait SOCKET_TIMEOUT to clients connect on server
+            //espera SOCKET_TIMEOUT para os clientes se conectarem ao server
             serverSocket.setSoTimeout(SOCKET_TIMEOUT);
             resetLoginAttempts();
 
@@ -92,7 +98,7 @@ public class Server {
                     executor.execute(new ServerThread(clientSocket, phaser));
 
                 } catch (SocketTimeoutException ste) {
-                    System.out.println("Main: Acabou o tempo para aceitar novos jogares.");
+                    System.err.println("Main: Acabou o tempo para aceitar novos jogares.");
                     executor.shutdownNow();
                     break;
                 }

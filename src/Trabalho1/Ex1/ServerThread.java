@@ -45,9 +45,9 @@ public class ServerThread extends Thread {
                 String login = in.readLine();
                 String password = in.readLine();
 
+                //tenta fazer o login e guarda a resposta no userData
+                //podendo ser um User ou NULL
                 Optional<User> userData = Server.fh.login(new User(login, password));
-
-
 
                 //se for null
                 if (userData.isPresent()) {
@@ -76,14 +76,16 @@ public class ServerThread extends Thread {
                 //ouvir o palpite
                 String guess = in.readLine();
 
+                //se o jogo tiver sido finalizado
                 if (Server.is_game_ended) {
+                    //se nao tiver vencedor
                     if (Server.WINNER.isEmpty()) {
                         //nao tem vencedor
                         out.println("O jogo finalizou-se por tempo.");
                     } else {
+                        //tem um vencedor e o jogo acabou por isso
                         out.println("O usuário: " + Server.WINNER + " GANHOU!!!");
                         System.out.println("Thread: " + this.getName() + ". O usuário: " + Server.WINNER + " GANHOU!!!");
-                        //tem um vencedor e o jogo acabou por isso
                     }
                     break;
                 }
@@ -99,14 +101,12 @@ public class ServerThread extends Thread {
                     if (WORD_CHOOSE.equals(guess)) {
 //                        correctGuess = true;
                         isWon = true;
-
                     }
-
                 } else {
-
                     //é uma letra
-                    //percorrer wordchoose
+                    //percorrer WORD_CHOOSE
                     for (int i = 0; i < WORD_CHOOSE.length(); i++) {
+                        //verificar se há letra em alguma posição da WORD_CHOOSE
                         if (WORD_CHOOSE.charAt(i) == guess.charAt(0)) {
                             //achei uma letra
                             sbHiddenWord.setCharAt(i, guess.charAt(0));
@@ -114,6 +114,8 @@ public class ServerThread extends Thread {
                         }
                     }
                 }
+
+                //no caso de acertar letra por letra, preciso validar se a palavra que temos é igual a palavra que está no servidor
                 if(sbHiddenWord.toString().equals(WORD_CHOOSE)){
                     isWon = true;
                 }
@@ -125,9 +127,11 @@ public class ServerThread extends Thread {
                     Server.is_game_ended = true;
                     Server.WINNER = user.getUsername();
                 } else if (correctGuess) {
+                    //acertou uma letra
                     out.println("PARCIAL");
                     System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: {" + guess + "} e acertou 1 letra. Palavra escolhida: " + WORD_CHOOSE);
                 } else {
+                    //errou
                     out.println("ERRO");
                     System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: {" + guess + "} e errou. Palavra escolhida: " + WORD_CHOOSE);
                 }
@@ -136,7 +140,6 @@ public class ServerThread extends Thread {
 
         } catch (IOException e) {
             System.err.println("Thread: " + this.getName() + " - Erro de I/O: " + e.getMessage());
-//            throw new RuntimeException(e);
         } finally {
             System.out.println("Thread: " + this.getName() + " encerrada.");
             phaser.arriveAndDeregister(); // Fim da thread
