@@ -29,7 +29,7 @@ public class ServerThread extends Thread {
         System.out.println("Thread: " + this.getName() + " iniciada para o cliente: " + clientSocket.getRemoteSocketAddress());
 
         try (PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
-             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
         ) {
             //while da auth
             boolean auth = false;
