@@ -42,6 +42,11 @@ public class Client {
 
                 String statusAuth = in.readLine();
 
+                if(statusAuth.equalsIgnoreCase("FINALIZADO")){
+                    System.out.println("O jogo já foi finalizado, não pode mais se conectar.");
+                    return;  // Sai do programa
+                }
+
                 if(statusAuth.equalsIgnoreCase("AUTENTICADO")){
                     //autenticado
                     userLogged = new User(login, password);
@@ -93,6 +98,8 @@ public class Client {
                         case "ERRO":
                             System.out.println("Errou o palpite.");
                             break;
+                        case "FINALIZADO":
+                            System.out.println("O jogo já foi finalizado, não pode mais se conectar.\n");
                         default:
                             System.out.println(feedback);
                             return;

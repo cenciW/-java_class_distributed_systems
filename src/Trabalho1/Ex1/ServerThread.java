@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.Phaser;
 
 import static src.Trabalho1.Ex1.Server.WORD_CHOOSE;
+import static src.Trabalho1.Ex1.Server.is_game_ended;
 
 public class ServerThread extends Thread {
     private final Socket clientSocket;
@@ -33,11 +34,20 @@ public class ServerThread extends Thread {
             //while da auth
             boolean auth = false;
             while (!auth) {
+
+                if(is_game_ended){
+                    System.out.println("O usuário: " + clientSocket.getRemoteSocketAddress() + ". Não pode conectar-se. O jogo já foi finalizado");
+                    out.println("FINALIZADO");
+                    break;
+                }
+
                 //logica do login
                 String login = in.readLine();
                 String password = in.readLine();
 
                 Optional<User> userData = Server.fh.login(new User(login, password));
+
+
 
                 //se for null
                 if (userData.isPresent()) {
@@ -110,7 +120,7 @@ public class ServerThread extends Thread {
 
                 //completamente certo / parcialmente certo / incorreto
                 if (isWon) {
-                    out.println("GANHOU!!! A palavra é: " + WORD_CHOOSE);
+                    out.println("GANHOU: " + WORD_CHOOSE);
                     System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: {" + guess + "} e venceu. Palavra escolhida: " + WORD_CHOOSE);
                     Server.is_game_ended = true;
                     Server.WINNER = user.getUsername();
@@ -126,7 +136,7 @@ public class ServerThread extends Thread {
 
         } catch (IOException e) {
             System.err.println("Thread: " + this.getName() + " - Erro de I/O: " + e.getMessage());
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
         } finally {
             System.out.println("Thread: " + this.getName() + " encerrada.");
             phaser.arriveAndDeregister(); // Fim da thread
