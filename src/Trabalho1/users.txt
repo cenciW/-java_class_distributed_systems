@@ -1,2 +1,2 @@
 user1;senha123;1
-user2;senha456;0
+user2;senha456;1

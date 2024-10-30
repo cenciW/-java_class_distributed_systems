@@ -20,11 +20,11 @@ public class Server {
 
     //número máximo de threads
     private final static int N_THREADS = 10;
-    private final static int SOCKET_TIMEOUT = 50000;
+//    private final static int SOCKET_TIMEOUT = 50000;
     private final static Phaser phaser = new Phaser();
 //    public static volatile int EXTRACTED_NUMBER;
     //configurando timeout
-    private final static int MAX_GAME_TIME = 50000;
+//    private final static int MAX_GAME_TIME = 50000;
     public static volatile boolean is_game_ended = false;
     public static String WORD_CHOOSE;
     public static String WINNER = "";
@@ -85,7 +85,7 @@ public class Server {
                 ExecutorService executor = Executors.newFixedThreadPool(N_THREADS)
         ) {
             //espera SOCKET_TIMEOUT para os clientes se conectarem ao server
-            serverSocket.setSoTimeout(SOCKET_TIMEOUT);
+//            serverSocket.setSoTimeout(SOCKET_TIMEOUT);
             resetLoginAttempts();
 
             while (true) {
@@ -104,15 +104,15 @@ public class Server {
                 }
             }
 
-            if (!executor.awaitTermination(MAX_GAME_TIME, TimeUnit.SECONDS)) {
-                is_game_ended = true;
-                System.out.println("Main: O tempo de jogo terminou.");
-            }
+//            if (!executor.awaitTermination(MAX_GAME_TIME, TimeUnit.SECONDS)) {
+//                is_game_ended = true;
+//                System.out.println("Main: O tempo de jogo terminou.");
+//            }
 
-        } catch (InterruptedException e) {
+        } /*catch (InterruptedException e) {
             System.out.println("Main: ocorreu um erro em awaitTermination");
             System.exit(2);
-        } catch (IOException e) {
+        }*/ catch (IOException e) {
             System.err.println("MAIN: Ocorreu um erro de I/O ao tentar criar o Socket na porta: " + portNumber + ". Erro: " + e.getMessage());
             System.exit(3);
         }

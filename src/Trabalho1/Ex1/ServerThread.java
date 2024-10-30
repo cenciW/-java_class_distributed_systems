@@ -53,12 +53,12 @@ public class ServerThread extends Thread {
                 if (userData.isPresent()) {
                     //tenho usuário
                     auth = true;
-                    System.out.println("Autenticado");
+                    System.out.println("Usuário: " + userData.get().getUsername() + " está Autenticado");
                     out.println("AUTENTICADO");
                     user = userData.get();
                 } else {
                     out.println("ERRO");
-                    System.out.println("Erro");
+                    System.out.println("Erro, usuário ou senha inválido(s).");
                 }
             }
 
@@ -84,7 +84,7 @@ public class ServerThread extends Thread {
                         out.println("O jogo finalizou-se por tempo.");
                     } else {
                         //tem um vencedor e o jogo acabou por isso
-                        out.println("O usuário: " + Server.WINNER + " GANHOU!!!");
+                        out.println("Tarde demais... O usuário: " + Server.WINNER + " GANHOU!!!");
                         System.out.println("Thread: " + this.getName() + ". O usuário: " + Server.WINNER + " GANHOU!!!");
                     }
                     break;
