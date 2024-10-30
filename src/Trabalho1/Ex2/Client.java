@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Client {
@@ -25,7 +26,7 @@ public class Client {
 
         try (
                 Socket clientSocket = new Socket(hostName, portNumber);
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
         ) {
             User userLogged;
@@ -80,22 +81,23 @@ public class Client {
                 //recebe o status do server thread
                 String feedback = in.readLine();
 
-                switch(feedback){
-                    case "GANHOU":
-                        System.out.println("Acabou por ganhou.");
-                        return;
-                    case "PARCIAL":
-                        System.out.println("Acabou por parcial.");
-                        break;
-                    case "ERRO":
-                        System.out.println("Acabou por erro.");
-                        break;
-                    default:
-                        System.out.println(feedback);
-                        return;
+                if (feedback.startsWith("GANHOU:")) {
+                    String palavraFinal = feedback.split(":")[1]; // Extrai a palavra final
+                    System.out.println("Parabéns! Você ganhou. A palavra é: " + palavraFinal);
+                    return;
+                } else {
+                    switch(feedback) {
+                        case "PARCIAL":
+                            System.out.println("Acertou o palpite: " + guessFromClient + "\n");
+                            break;
+                        case "ERRO":
+                            System.out.println("Errou o palpite.");
+                            break;
+                        default:
+                            System.out.println(feedback);
+                            return;
+                    }
                 }
-
-
             }
 
         } catch (UnknownHostException e) {

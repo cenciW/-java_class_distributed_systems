@@ -7,7 +7,6 @@ import java.util.Date;
 public class QuoteServer {
     private static final String fullFileName = System.getProperty("user.dir") + "\\src\\Ficha8\\Ex1\\phrases.txt";
 
-
     public static void main(String[] args) {
 //        System.out.println("\n" + fullFileName);
 

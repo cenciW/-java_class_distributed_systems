@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.concurrent.Phaser;
 
@@ -26,7 +27,7 @@ public class ServerThread extends Thread {
     public void run() {
         System.out.println("Thread: " + this.getName() + " iniciada para o cliente: " + clientSocket.getRemoteSocketAddress());
 
-        try (PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        try (PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
              BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         ) {
             //while da auth
@@ -103,18 +104,22 @@ public class ServerThread extends Thread {
                         }
                     }
                 }
+                if(sbHiddenWord.toString().equals(WORD_CHOOSE)){
+                    isWon = true;
+                }
+
                 //completamente certo / parcialmente certo / incorreto
                 if (isWon) {
-                    out.println("GANHOU");
-                    System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: " + guess + " e venceu. Palavra escolhida: " + WORD_CHOOSE);
+                    out.println("GANHOU!!! A palavra é: " + WORD_CHOOSE);
+                    System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: {" + guess + "} e venceu. Palavra escolhida: " + WORD_CHOOSE);
                     Server.is_game_ended = true;
                     Server.WINNER = user.getUsername();
                 } else if (correctGuess) {
                     out.println("PARCIAL");
-                    System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: " + guess + " e acertou 1 letra. Palavra escolhida: " + WORD_CHOOSE);
+                    System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: {" + guess + "} e acertou 1 letra. Palavra escolhida: " + WORD_CHOOSE);
                 } else {
                     out.println("ERRO");
-                    System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: " + guess + " e errou. Palavra escolhida: " + WORD_CHOOSE);
+                    System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: {" + guess + "} e errou. Palavra escolhida: " + WORD_CHOOSE);
                 }
             }
 
