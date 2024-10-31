@@ -70,6 +70,9 @@ public class Client {
                         System.out.println("Tentativas encerradas.");
                         System.exit(0);
                     } else{
+                        if(statusAuth.equalsIgnoreCase("ERRO")){
+                            System.out.println("O usuário já está logado.");
+                        }
                         System.out.println("Tentativas restantes: " + attempts);
                     }
 

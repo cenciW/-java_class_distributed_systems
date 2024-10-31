@@ -62,7 +62,7 @@ public class ServerThread extends Thread {
                     user = userData.get();
                 } else {
                     out.println("ERRO");
-                    System.out.println("Erro, usuário ou senha inválido(s).");
+                    System.out.println("Thread:" + this.getName() + ". Erro, usuário já logado ou senha inválido(s).");
                 }
             }
 
