@@ -1,5 +1,5 @@
-user1;senha123;1
+user1;senha123;0
 user2;senha456;0
-ze;ze;1
+ze;ze;0
 jadir;jadir;0
 adm;adm;1

@@ -90,8 +90,7 @@ public class Server {
         ) {
             //espera WAIT_PLAYERS_TIME para os clientes se conectarem ao server
             serverSocket.setSoTimeout(WAIT_PLAYERS_TIME);
-            //resetando as tentativas de login
-            resetLoginAttempts();
+
 
             while (true) {
                 System.out.println("Main: À espera de novos jogadores.");
@@ -108,6 +107,9 @@ public class Server {
                     break;
                 }
             }
+
+            //resetando as tentativas de login
+            resetLoginAttempts();
 
             //para controle de auth após o jogo já ter começado
             is_game_started = true;
