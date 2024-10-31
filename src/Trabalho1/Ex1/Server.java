@@ -20,16 +20,21 @@ public class Server {
 
     //número máximo de threads
     private final static int N_THREADS = 10;
-//    private final static int SOCKET_TIMEOUT = 50000;
+    //
+    //30 segundos para os jogadores se conectarem
+    private final static int WAIT_PLAYERS_TIME = 30000;
     private final static Phaser phaser = new Phaser();
-//    public static volatile int EXTRACTED_NUMBER;
+    //    public static volatile int EXTRACTED_NUMBER;
     //configurando timeout
-//    private final static int MAX_GAME_TIME = 50000;
+    //1:30 de jogo
+    private final static int MAX_GAME_TIME = 90;
     public static volatile boolean is_game_ended = false;
+    public static volatile boolean is_game_started = false;
     public static String WORD_CHOOSE;
     public static String WINNER = "";
     public static volatile FileHandler fh = new FileHandler();
 
+    //método para resetar as tentativas de login no .txt
     public static void resetLoginAttempts() {
         final String filePath = "src/Trabalho1/users.txt";
         StringBuilder updatedContent = new StringBuilder();
@@ -61,41 +66,41 @@ public class Server {
         }
     }
 
-
     //'psvm' main
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-//      //Porta que o servidor vai rodar
+        System.out.println("| Server: FORCA |");
+
+        //Porta que o servidor vai rodar
         int portNumber = InputValidation.validateIntBetween(sc,
                 "Introduza o número da porta que o servidor irá escutar (entre 1024 e 65535): ",
                 1024, 65535);
 
         //atribuindo a palavra chave para começar o jogo
-        System.out.print("Digite a palavra para o jogo: ");
-        WORD_CHOOSE = sc.nextLine().strip();
+        do {
+            System.out.print("Digite a palavra para o jogo, a palavra 'desisto' é reservada, não use como palavra chave para o jogo: ");
+            WORD_CHOOSE = sc.nextLine().toLowerCase();
 
-
-        //fechando scanner
-        sc.close();
-
+        } while (WORD_CHOOSE.equalsIgnoreCase("desisto") || WORD_CHOOSE.trim().isEmpty());
 
         try (
                 ServerSocket serverSocket = new ServerSocket(portNumber);
                 ExecutorService executor = Executors.newFixedThreadPool(N_THREADS)
         ) {
-            //espera SOCKET_TIMEOUT para os clientes se conectarem ao server
-//            serverSocket.setSoTimeout(SOCKET_TIMEOUT);
+            //espera WAIT_PLAYERS_TIME para os clientes se conectarem ao server
+            serverSocket.setSoTimeout(WAIT_PLAYERS_TIME);
+            //resetando as tentativas de login
             resetLoginAttempts();
 
             while (true) {
-                System.out.println("Main: À espera de novas ligações.");
+                System.out.println("Main: À espera de novos jogadores.");
                 try {
                     Socket clientSocket = serverSocket.accept();
                     System.out.println("Main: Nova ligação de: " + clientSocket.getRemoteSocketAddress());
 
                     // Executa a nova thread para o cliente conectado
-                    executor.execute(new ServerThread(clientSocket, phaser));
+                    executor.execute(new ServerThread(clientSocket));
 
                 } catch (SocketTimeoutException ste) {
                     System.err.println("Main: Acabou o tempo para aceitar novos jogares.");
@@ -104,18 +109,24 @@ public class Server {
                 }
             }
 
-//            if (!executor.awaitTermination(MAX_GAME_TIME, TimeUnit.SECONDS)) {
-//                is_game_ended = true;
-//                System.out.println("Main: O tempo de jogo terminou.");
-//            }
+            //para controle de auth após o jogo já ter começado
+            is_game_started = true;
 
-        } /*catch (InterruptedException e) {
+            //verificar se já deu o tempo máximo do jogo
+            if (!executor.awaitTermination(MAX_GAME_TIME, TimeUnit.SECONDS)) {
+                is_game_ended = true;
+                System.out.println("Main: O tempo de jogo terminou.");
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
             System.out.println("Main: ocorreu um erro em awaitTermination");
             System.exit(2);
-        }*/ catch (IOException e) {
-            System.err.println("MAIN: Ocorreu um erro de I/O ao tentar criar o Socket na porta: " + portNumber + ". Erro: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Main: Ocorreu um erro de I/O ao tentar criar o Socket na porta: " + portNumber + ". Erro: " + e.getMessage());
             System.exit(3);
         }
+        //fechando scanner
+        sc.close();
     }
 }
 

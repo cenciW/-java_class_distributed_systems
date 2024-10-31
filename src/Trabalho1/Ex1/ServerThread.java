@@ -9,27 +9,22 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import java.util.concurrent.Phaser;
 
-import static src.Trabalho1.Ex1.Server.WORD_CHOOSE;
-import static src.Trabalho1.Ex1.Server.is_game_ended;
+import static src.Trabalho1.Ex1.Server.*;
 
 public class ServerThread extends Thread {
     private final Socket clientSocket;
-    private final Phaser phaser;
     User user;
 
-    public ServerThread(Socket clientSocket, Phaser phaser) {
+    public ServerThread(Socket clientSocket) {
         this.clientSocket = clientSocket;
-        this.phaser = phaser;
-        phaser.register();
     }
 
     public void run() {
         System.out.println("Thread: " + this.getName() + " iniciada para o cliente: " + clientSocket.getRemoteSocketAddress());
 
         try (PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
-             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8))
         ) {
             //while da auth
             boolean auth = false;
@@ -45,12 +40,21 @@ public class ServerThread extends Thread {
                 String login = in.readLine();
                 String password = in.readLine();
 
+                if(is_game_started){
+                    System.out.println("O jogo já começou, você não pode mais se conectar.");
+                    out.println("INICIADO");
+                    System.exit(0);
+                }
+
                 //tenta fazer o login e guarda a resposta no userData
                 //podendo ser um User ou NULL
                 Optional<User> userData = Server.fh.login(new User(login, password));
 
-                //se for null
-                if (userData.isPresent()) {
+                //se nao for null
+                if(userData == null){
+                    out.println("Esse usuário já está logado ou logou-se nessa partida.");
+
+                }else if (userData.isPresent()) {
                     //tenho usuário
                     auth = true;
                     System.out.println("Usuário: " + userData.get().getUsername() + " está Autenticado");
@@ -62,19 +66,40 @@ public class ServerThread extends Thread {
                 }
             }
 
+            synchronized (this) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    System.out.println("Thread " + this.getName() + ": O jogador será informado que o jogo vai começar.");
+                    out.println("O jogo começou, seja rápido!");
+                }
+            }
+
             String hiddenWord = ("-".repeat(WORD_CHOOSE.length()));
 
             StringBuilder sbHiddenWord = new StringBuilder(hiddenWord);
 
-//            System.out.println(hiddenWord);
-
+            //loop do jogo
             while (true) {
                 //server thread pro client a palavra camuf
                 out.println(sbHiddenWord);
 
 
                 //ouvir o palpite
-                String guess = in.readLine();
+                String guess = "";
+                guess = in.readLine();
+
+                if (guess == null || guess.trim().isEmpty()) {
+                    out.println("ERRO");
+                    System.out.println("Thread: " + this.getName() + ": Jogador: " + user.getUsername() + " errou no palpite");
+                    continue;
+                }
+
+                if(guess.equalsIgnoreCase("desisto")){
+                    out.println("DESISTENCIA");
+                    System.out.println("Thread: " + this.getName() + ": Jogador: " + user.getUsername() + " desistiu.");
+                    break;
+                }
 
                 //se o jogo tiver sido finalizado
                 if (Server.is_game_ended) {
@@ -126,6 +151,7 @@ public class ServerThread extends Thread {
                     System.out.println("O Jogador: " + user.getUsername() + " deu o palpite: {" + guess + "} e venceu. Palavra escolhida: " + WORD_CHOOSE);
                     Server.is_game_ended = true;
                     Server.WINNER = user.getUsername();
+                    break;
                 } else if (correctGuess) {
                     //acertou uma letra
                     out.println("PARCIAL");
@@ -142,7 +168,6 @@ public class ServerThread extends Thread {
             System.err.println("Thread: " + this.getName() + " - Erro de I/O: " + e.getMessage());
         } finally {
             System.out.println("Thread: " + this.getName() + " encerrada.");
-            phaser.arriveAndDeregister(); // Fim da thread
         }
     }
 }

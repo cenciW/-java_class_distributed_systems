@@ -27,7 +27,7 @@ public class Client {
         try (
                 Socket clientSocket = new Socket(hostName, portNumber);
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8))
         ) {
             User userLogged;
             do{
@@ -44,6 +44,11 @@ public class Client {
                 //recebendo a resposta da auth do servidor
                 String statusAuth = in.readLine();
 
+                if(statusAuth.equalsIgnoreCase("INICIADO")){
+                    System.out.println("O jogo já iniciou, você não pode mais se conectar.");
+                    System.exit(0);
+                }
+
                 //se o que vier de resposta do servidor for: "FINALIZADO" significa que o jogo acabou.
                 if(statusAuth.equalsIgnoreCase("FINALIZADO")){
                     System.out.println("O jogo já foi finalizado, não pode mais se conectar.");
@@ -55,7 +60,6 @@ public class Client {
                     //autenticado
                     userLogged = new User(login, password);
                     System.out.println(userLogged.getUsername() + " autenticado com sucesso.");
-                    System.out.println("Aguardando início do jogo.");
                     break;
                 } else if(statusAuth.equalsIgnoreCase("ERRO")){
                     //erro
@@ -75,13 +79,20 @@ public class Client {
             }while (true);
 
             //while do jogo
-            while(true){
+            System.out.println("Aguarde o jogo começar...");
+            System.out.println(in.readLine());
+
+            String guessFromClient ="";
+            do{
                 String hiddenWord = in.readLine();
                 //envia pro servidor a palavra ou a letra
                 System.out.println("A palavra é: " + hiddenWord);
 
+
                 //lendo o palpite
-                String guessFromClient = sc.nextLine();
+                System.out.println("Digite 'desisto' para sair do jogo.");
+                System.out.print(":>");
+                guessFromClient = sc.nextLine();
 
 
                 //mandando palpite pro server
@@ -116,12 +127,14 @@ public class Client {
                         case "FINALIZADO":
                             System.out.println("O jogo já foi finalizado, não pode mais se conectar.\n");
                         //caso padrão, se nao cair em nenhum dos cases, cai aqui e apenas printa o que o servidor enviou para cá (cliente)
+                        case "DESISTENCIA":
+                            System.out.println("Obrigado por tentar, que pena que desistiu.");
                         default:
                             System.out.println(feedback);
                             return;
                     }
                 }
-            }
+            } while (!guessFromClient.equalsIgnoreCase("desisto"));
 
         } catch (UnknownHostException e) {
             System.err.println("Erro de Host desconhecido: " + e.getMessage());
