@@ -2,4 +2,4 @@ user1;senha123;0
 user2;senha456;0
 ze;ze;0
 jadir;jadir;0
-adm;adm;1
+adm;adm;0

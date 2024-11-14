@@ -129,9 +129,10 @@ public class Client {
                         //portanto ninguém pode mais se conectar
                         case "FINALIZADO":
                             System.out.println("O jogo já foi finalizado, não pode mais se conectar.\n");
-                        //caso padrão, se nao cair em nenhum dos cases, cai aqui e apenas printa o que o servidor enviou para cá (cliente)
+                        //Desistência
                         case "DESISTENCIA":
                             System.out.println("Obrigado por tentar, que pena que desistiu.");
+                        //caso padrão, se nao cair em nenhum dos cases, cai aqui e apenas printa o que o servidor enviou para cá (cliente)
                         default:
                             System.out.println(feedback);
                             return;
